@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349346027432",
+    "project_id": "immatriculation-d816b",
+    "storage_bucket": "immatriculation-d816b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349346027432:android:0786d1dd17591418222f9d",
+        "android_client_info": {
+          "package_name": "com.immatriculation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ3EU59-UUUj3Vw_o9ydae2RtrqNdg00c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
