@@ -17,9 +17,11 @@ const Acceuil = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.navRight}>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton} 
+          onPress={() => navigation.navigate('Login')}>
             <Ionicons name="log-in-outline" size={20} color="black" />
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => navigation.navigate('InscriptionStep1')} // Navigation vers la page d'inscription

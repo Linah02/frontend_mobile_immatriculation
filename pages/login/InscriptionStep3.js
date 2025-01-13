@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
-
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert} from 'react-native';
+import { Picker } from '@react-native-picker/picker'; // Import correct
 const InscriptionStep3 = ({ navigation, route }) => {
   // Récupérer les données des étapes 1 et 2
   const { step1Data, id_fokontany } = route.params ? route.params : {};
@@ -22,6 +22,31 @@ const InscriptionStep3 = ({ navigation, route }) => {
     setCinData({ ...cinData, [field]: value });
     console.log(`Changement dans ${field}:`, value);  // Affiche la donnée chaque fois qu'un champ est modifié
   };
+  const regions = [
+    'Analamanga',
+    'Vakinankaratra',
+    'Itasy',
+    'Bongolava',
+    'Atsinanana',
+    'Analanjirofo',
+    'Alaotra-Mangoro',
+    'Boeny',
+    'Sofia',
+    'Betsiboka',
+    'Melaky',
+    'Atsimo-Andrefana',
+    'Androy',
+    'Anosy',
+    'Atsimo-Atsinanana',
+    'Menabe',
+    'Diana',
+    'Sava',
+    'Ihorombe',
+    'Haute-Matsiatra',
+    'Amoron’i Mania',
+    'Vatovavy-Fitovinany',
+    'Sud-Est',
+  ];
   const handleSubmit = async () => {
     const { cin, dateDelivrance, lieuDelivrance, contact, email } = cinData;
     console.log("Données du formulaire avant soumission:",step1Data,id_fokontany, cinData,);
@@ -53,22 +78,32 @@ const InscriptionStep3 = ({ navigation, route }) => {
     }
   
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/inscription/', {
+      const response = await fetch('http://192.168.0.185:8000/api/inscription/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...cinData,
-          step1Data,
+          ...step1Data,
           id_fokontany,
         }),
-      });
+         }
+    );
   
       const result = await response.json();
       if (response.ok) {
-        Alert.alert('Succès', 'Inscription réussie.');
-      } else {
+        Alert.alert(
+          'Succès✔',
+          'Inscription réussie. Vérifiez votre email pour le PRENIF et le mot de passe.',
+          [
+            {
+              text: 'Se connecter',
+              onPress: () => navigation.navigate('Login'), // Redirection vers la page de connexion
+            },
+          ]
+        );
+       } else {
         // Afficher le message d'erreur retourné par le serveur
         Alert.alert('Erreur', result.message || 'Une erreur est survenue.');
       }
@@ -76,6 +111,8 @@ const InscriptionStep3 = ({ navigation, route }) => {
       console.error(error);
       Alert.alert('Erreur', 'Impossible de se connecter au serveur. Veuillez réessayer.');
     }
+
+
   };
   
 
@@ -101,16 +138,21 @@ const InscriptionStep3 = ({ navigation, route }) => {
           onChangeText={(value) => handleInputChange('dateDelivrance', value)}
         />
       </View>
-
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Lieu de Délivrance</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Entrer le lieu de délivrance"
-          value={cinData.lieuDelivrance}
-          onChangeText={(value) => handleInputChange('lieuDelivrance', value)}
-        />
+      <Text style={styles.label}>Lieu de Délivrance</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={cinData.lieuDelivrance}
+          onValueChange={(value) => handleInputChange('lieuDelivrance', value)}
+        >
+          <Picker.Item label="Sélectionner un lieu" value="" />
+          {regions.map((region, index) => (
+            <Picker.Item key={index} label={region} value={region} />
+          ))}
+        </Picker>
       </View>
+    </View>
+  
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Contact</Text>
@@ -191,6 +233,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  successText: {
+    color: 'green', // Couleur du texte en vert
+    fontSize: 18, // Taille de police
+    fontWeight: 'bold', // Texte en gras
   },
 });
 

@@ -1,17 +1,107 @@
-// pages/Login/index.js
-import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import loginStyles from './styles/loginStyles'; // Import des styles
-const Login = () => {
+import React, { useState } from 'react';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const Login = ({navigation}) => {
+  const [prenif, setPrenif] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://192.168.1.199:8000/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prenif,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Réponse de l\'API:', data);
+
+      if (response.ok) {
+        console.log('Navigating to RecuperationCode');
+        navigation.navigate('RecuperationCode'); // Navigation vers l'écran RecuperationCode
+      } else {
+        setError(data.error || 'Erreur de connexion');
+      }
+    } catch (error) {
+      console.error(error);
+      setError('Erreur réseau');
+    }
+  };
+
   return (
-    <View style={loginStyles.container}>
-      <Text>Connexion</Text>
-      <TextInput style={loginStyles.input} placeholder="PRENIF" />
-      <TextInput style={loginStyles.input} placeholder="Mot de passe" secureTextEntry />
-      <Button title="Se connecter" onPress={() => {}} />
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image source={require('../../assets/Logo-DGI.jpg')} style={styles.logo} />
+      <TextInput
+        style={styles.input}
+        placeholder="PRENIF"
+        value={prenif}
+        onChangeText={setPrenif}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Mot de passe"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Se connecter</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    height: '100%',
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+    resizeMode: 'contain',
+  },
+  input: {
+    height: 45,
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingLeft: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#808080',
+    padding: 12,
+    borderRadius: 8,
+    width: '100%',
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+});
 
 export default Login;

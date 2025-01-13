@@ -2,26 +2,25 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, TouchableWithoutFeedback, Animated, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AppNavigation from './AppNavigation'; // Importez votre AppNavigation
-import { navigationRef } from './NavigationService'; // Assurez-vous que navigationRef est bien importé
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Acceuil  from './pages/accueil/index';
+import InscriptionStep1 from './pages/login/InscriptionStep1'; // Assurez-vous du chemin correct
+import Connexion_part1 from './pages/login/connexion_part1';
+import RecuperationCode from './pages/login/connexion_part2';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [slideAnim] = useState(new Animated.Value(-250)); // Valeur initiale pour l'animation du menu
-
+  const Stack = createStackNavigator(); // Définissez Stack ici
+  
   const toggleMenu = () => {
-    const toValue = isMenuOpen ? -200 : 0; // Valeur du menu (fermé ou ouvert)
+    const toValue = isMenuOpen ? -250 : 0; // Valeur du menu (fermé ou ouvert)
     setIsMenuOpen(!isMenuOpen);
     Animated.spring(slideAnim, {
       toValue,
       useNativeDriver: true,
     }).start();
-  };
-
-  const navigateToProfile = () => {
-    navigationRef.current?.navigate('ProfileScreen'); // Utilisation de navigationRef pour la navigation
-  };
-  const navigateToChat = () => {
-    navigationRef.current?.navigate('ChatScreen');
   };
 
   return (
@@ -32,26 +31,46 @@ export default function App() {
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>
       )}
-      <View style={styles.container}>
-        <AppNavigation toggleMenu={toggleMenu} slideAnim={slideAnim} />
-      </View>
+
+<NavigationContainer>
+      <Stack.Navigator initialRouteName="Acceuil">
+        <Stack.Screen name="Acceuil" component={Acceuil} />
+        <Stack.Screen name="Login" component={Connexion_part1} />
+        <Stack.Screen name="RecuperationCode" component={RecuperationCode} />
+        <Stack.Screen name="InscriptionStep1" component={InscriptionStep1} />
+        </Stack.Navigator>
+    </NavigationContainer>
+
+      {/* Menu glissant */}
+      <Animated.View style={[styles.menu, { transform: [{ translateX: slideAnim }] }]}>
+        <TouchableOpacity style={styles.menuItem}>
+          <Ionicons name="list" size={25} color="#0000FF" />
+          <Text style={styles.menuText}>Transactions</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem}>
+          <Ionicons name="bar-chart" size={25} color="#0000FF" />
+          <Text style={styles.menuText}>Chart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem}>
+          <Ionicons name="exit" size={25} color="#0000FF" />
+          <Text style={styles.menuText}>Déconnexion</Text>
+        </TouchableOpacity>
+      </Animated.View>
 
       {/* Barre de navigation en bas */}
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navButton} onPress={toggleMenu}>
           <Ionicons name="menu" size={30} color="#a9d8de" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={navigateToProfile} // Naviguer vers ProfileScreen
-        >
+        <TouchableOpacity style={styles.navButton}>
+          <Ionicons name="chatbubbles" size={30} color="#a9d8de" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton}>
+          <Ionicons name="home" size={30} color="#a9d8de" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton}>
           <Ionicons name="person" size={30} color="#a9d8de" />
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navButton}
-          onPress={navigateToChat}>
-          <Ionicons name="chatbubbles" size={30} color="#a9d8de" />
-        </TouchableOpacity> 
       </View>
     </View>
   );
@@ -87,8 +106,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: 200, // Largeur fixe pour le menu
-    backgroundColor: 'gray',
+    width: 250, // Largeur fixe pour le menu
+    backgroundColor: 'white',
     borderRightWidth: 1,
     borderRightColor: '#a9d8de',
     paddingTop: 60,
@@ -102,7 +121,7 @@ const styles = StyleSheet.create({
   menuText: {
     marginLeft: 10,
     fontSize: 18,
-    color: 'white',
+    color: '#0000FF',
   },
   overlay: {
     position: 'absolute',

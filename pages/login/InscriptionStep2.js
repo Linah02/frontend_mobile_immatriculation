@@ -41,7 +41,7 @@ const InscriptionStep2 = ({ navigation, route }) => {
       }
 
       try {
-        const response = await fetch(`http://192.168.1.199:8000/api/list_fokontany/?search=${query}`);
+        const response = await fetch(`http://192.168.0.185:8000/api/list_fokontany/?search=${query}`);
         if (!response.ok) throw new Error('Échec de la requête');
 
         const data = await response.json();
@@ -154,6 +154,11 @@ const InscriptionStep2 = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 16, // Ajoute un padding horizontal global
+    backgroundColor: '#f5f5f5', // Couleur d'arrière-plan pour tester les débordements
+  },
   subtitle: {
     fontSize: 20,
     textAlign: 'center',
@@ -162,10 +167,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: 15,
+    left:5,
+
   },
   label: {
     fontSize: 12,
     color: '#333',
+    left:10,
   },
   input: {
     height: 40,
@@ -174,13 +182,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     fontSize: 14,
+
   },
   suggestionsContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
     backgroundColor: 'white',
     position: 'absolute',
-    top: 40, // Juste sous le champ de saisie
+    top: -300, // Juste sous le champ de saisie
     left: 0,
     right: 0,
     zIndex: 1000,

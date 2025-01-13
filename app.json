@@ -20,18 +20,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-    "package": "com.immatriculation" 
+      "package": "com.immatriculation"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-firebase-messaging",
-        {
-          "googleServicesFile": "./google-services.json"
-        }
-      ]
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "573cf0f6-25a3-4ce8-a55a-8c7e18707772"
+      }
+    }
   }
 }
