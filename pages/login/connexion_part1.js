@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [prenif, setPrenif] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -55,6 +55,12 @@ const Login = ({navigation}) => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
+      {/* Lien vers l'inscription */}
+      <TouchableOpacity style={styles.registerLink}
+        onPress={() => navigation.navigate('InscriptionStep1')} // Navigation vers la page d'inscription
+         >
+        <Text style={styles.registerText}>S'inscrire</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -101,6 +107,15 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: 10,
+  },
+  registerLink: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+  },
+  registerText: {
+    color: '#0066cc',
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });
 

@@ -1,68 +1,97 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
 const StatistiqueScreen = () => {
-  // Définition des données du graphique
-  const data = {
-    labels: ['01/01', '02/01', '03/01', '04/01', '05/01'],  // Dates sur l'axe X
-    datasets: [
-      {
-        data: [1000, 1500, 1200, 1800, 2000],  // Montants sur l'axe Y
-      },
-    ],
-  };
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [tableData, setTableData] = useState([]);
 
-  // Taille du graphique
   const screenWidth = Dimensions.get('window').width;
 
-  // Données pour le tableau
-  const tableData = [
-    { date: '01/01', montant: '1000' },
-    { date: '02/01', montant: '1500' },
-    { date: '03/01', montant: '1200' },
-    { date: '04/01', montant: '1800' },
-    { date: '05/01', montant: '2000' },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://192.168.1.199:8000/api/chart/');
+        const result = await response.json();
+
+        const labels = result.data.map(item => item.annee.toString());
+        const datasets = result.data.map(item => item.total_mnt_ver);
+
+        // Ne pas ajuster les montants, garder les valeurs originales
+        const minValue = 0; // L'échelle commence à 0
+        const maxValue = Math.ceil(Math.max(...datasets));
+
+        setData({
+          labels,
+          datasets: [
+            {
+              data: datasets, // Utilisez les montants originaux
+            },
+          ],
+          minValue, // Échelle commence à 0
+          suggestedMax: maxValue, // Utiliser la valeur maximale calculée
+        });
+
+        setTableData(result.data);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données :', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1CC919" />
+        <Text>Chargement des données...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Statistiques des Montants</Text>
-      <BarChart
-        data={data}
-        width={screenWidth - 40}  // La largeur du graphique
-        height={220}  // La hauteur du graphique
-        chartConfig={{
-          backgroundColor: '#1CC919',
-          backgroundGradientFrom: '#8fc3c6',
-          backgroundGradientTo: '',
-          decimalPlaces: 0,  // Pas de décimales pour les montants
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
-          },
-        }}
-        verticalLabelRotation={30}  // Rotation des labels sur l'axe X
-      />
+      <Text style={styles.title}>Somme payée par année</Text>
 
-      {/* Tableau des détails */}
+      {data && (
+        <BarChart
+          data={{
+            labels: data.labels,
+            datasets: data.datasets,
+          }}
+          width={screenWidth - 40}
+          height={220}
+          chartConfig={{
+            backgroundColor: '#1CC919',
+            backgroundGradientFrom: '#8fc3c6',
+            backgroundGradientTo: '#ffffff',
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          fromZero={true} // Force le graphique à commencer à 0
+          yAxisSuffix={` AR`} // Affichage des montants en AR
+        />
+      )}
+
       <View style={styles.tableContainer}>
         <Text style={styles.tableTitle}>Détails des Montants</Text>
         <View style={styles.tableRow}>
-          <Text style={styles.tableHeader}>Date</Text>
-          <Text style={styles.tableHeader}>Montant en AR</Text>
+          <Text style={styles.tableHeader}>Année</Text>
+          <Text style={styles.tableHeader}>Montant (AR)</Text>
         </View>
         {tableData.map((item, index) => (
           <View style={styles.tableRow} key={index}>
-            <Text style={styles.tableCell}>{item.date}</Text>
-            <Text style={styles.tableCell}>{item.montant}</Text>
+            <Text style={styles.tableCell}>{item.annee}</Text>
+            <Text style={styles.tableCell}>{item.total_mnt_ver.toLocaleString() } .Ar</Text>
           </View>
         ))}
       </View>
@@ -72,7 +101,7 @@ const StatistiqueScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,  // Assure que le ScrollView prend tout l'espace vertical disponible
+    flexGrow: 1,
     backgroundColor: 'white',
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -82,6 +111,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tableContainer: {
     marginTop: 30,

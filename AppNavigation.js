@@ -15,20 +15,25 @@ import TransactionList from './pages/accueil/TransactionList';
 import TransactionDetail from './pages/accueil/detailTransaction';
 import { navigationRef } from './NavigationService';
 import ChatScreen from './pages/discussion/message';
-
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator(); // Créer le TabNavigator pour la barre de navigation en bas
 
 const AppNavigation = ({ toggleMenu, slideAnim }) => {
   return (
     <NavigationContainer ref={navigationRef}>
       <View style={{ flex: 1 }}>
-        <Stack.Navigator initialRouteName="Acceuil">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="InscriptionStep1" component={InscriptionStep1} />
           <Stack.Screen name="InscriptionStep2" component={InscriptionStep2} />
           <Stack.Screen name="InscriptionStep3" component={InscriptionStep3} />
-          <Stack.Screen name="Login" component={Connexion_part1} />
+          <Stack.Screen
+  name="Login"
+  component={Connexion_part1}
+  options={{ headerShown: false, tabBarVisible: false }} // Cache également la barre de navigation en bas si nécessaire
+/>
+
           <Stack.Screen name="Acceuil" component={Acceuil} />
-          <Stack.Screen name="RecuperationCode" component={RecuperationCode} />
+          <Stack.Screen name="RecuperationCode" component={RecuperationCode}  options={{ headerShown: false, tabBarVisible: false }}/>
           <Stack.Screen name="TransactionList" component={TransactionList} options={{ title: 'Détail paiement' }} />
           <Stack.Screen name="TransactionDetail" component={TransactionDetail} options={{ title: 'liste transaction' }} />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: 'Mon Profil' }} />
@@ -90,11 +95,14 @@ const styles = StyleSheet.create({
   menu: {
     position: 'absolute',
     top: 0,
+    left: 0,
     bottom: 0,
-    width: 200,
-    backgroundColor: '#535a5a',
-    padding: 20,
-    zIndex: 10,
+    width: 200, // Largeur fixe pour le menu
+    backgroundColor: 'gray',
+    borderRightWidth: 1,
+    borderRightColor: '#a9d8de',
+    paddingTop: 60,
+    paddingLeft: 20,
   },
   menuItem: {
     flexDirection: 'row',

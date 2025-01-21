@@ -1,0 +1,38 @@
+ <Modal
+        transparent={true}
+        visible={photoModalVisible}
+        animationType="slide"
+        onRequestClose={closePhotoModal}
+      >
+        <TouchableOpacity style={{ flex: 1 }} onPress={closePhotoModal}>
+          <View style={styles.overlay}>
+            <TouchableOpacity>
+              <View style={styles.photoModalContainer}>
+                <Text style={styles.modalText}>Modifier Photo de Profil</Text>
+                
+                <TouchableOpacity
+                  style={styles.photoButton}
+                  onPress={async () => {
+                    const result = await launchImageLibrary({
+                      mediaTypes: 'Images',
+                      allowsEditing: true,
+                      aspect: [1, 1],
+                      quality: 1,
+                    });
+
+                    if (!result.didCancel && result.assets[0].uri) {
+                      setPhotoUri(result.assets[0].uri); // Enregistrer l'URI de la photo sélectionnée
+                      console.log(result.assets[0].uri); // Afficher l'URI dans la console
+                    }
+                  }}
+                >
+                  <Text style={styles.photoButtonText}>Choisir une photo</Text>
+                </TouchableOpacity>
+                
+                <Button title="Sauvegarder" onPress={handleUploadPhoto} />
+                <Button title="Annuler" onPress={closePhotoModal} color="red" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>

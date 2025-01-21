@@ -1,230 +1,178 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, PermissionsAndroid, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Linking } from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import axios from 'axios';
 
-const ProfileScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false); // Modal pour options
-  const [passwordModalVisible, setPasswordModalVisible] = useState(false); // Modal pour le changement de mot de passe
-  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 }); // Position du modal
-  const [userData, setUserData] = useState({
-    name: "Nom d'utilisateur",
-    contact: "Non spécifié",
-    email: "Non spécifié",
-    photo: null,
-    cin: "N/A",
-    propr_nif: "N/A",
-  });
+const ChatScreen = () => {
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // State pour le mot de passe
-  const [oldPassword, setOldPassword] = useState(""); // Ancien mot de passe
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  // Fonction pour récupérer les données de l'API
-  const fetchUserData = async () => {
+  // Fonction pour récupérer les messages depuis l'API
+  const fetchMessages = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/api_profil', {
+      const response = await fetch('http://192.168.1.199:8000/api/discussion/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       const data = await response.json();
-      
-      if (response.ok) {
-        setUserData({
-          name: data.name || "Nom d'utilisateur",
-          contact: data.contact || "Non spécifié",
-          email: data.email || "Non spécifié",
-          photo: data.photo || null,
-          cin: data.cin || "N/A",
-          propr_nif: data.propr_nif || "N/A",
-        });
-      } else {
-        console.error(data.error);
-      }
+      setMessages(data.messages);
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Erreur lors de la récupération des messages :', error);
+      setLoading(false);
     }
   };
 
-  // Charger les données de l'utilisateur lors du premier rendu
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  // Fonction pour récupérer la position du bouton
-  const handleLayout = (event) => {
-    const { x, y, height } = event.nativeEvent.layout; // Position x, y, et hauteur
-    setModalPosition({ top: y + height, left: x }); // Ajuster la position du modal en dessous du bouton
-  };
-
-  const formatNumberWithSpaces = (number) => {
-    return new Intl.NumberFormat('fr-FR').format(number);
-  };
-
-  // Fermer le modal
-  const closeModal = () => setModalVisible(false);
-
-  const closePasswordModal = () => setPasswordModalVisible(false);
-
- // Fonction pour modifier le mot de passe
-const handleChangePassword = async () => {
-  // Vérifier si les mots de passe correspondent
-  if (newPassword !== confirmPassword) {
-    setPasswordError("Les mots de passe ne correspondent pas.");
-    return;
-  }
-
-  // Affichage des données du formulaire dans la console
-  console.log("Ancien mot de passe:", oldPassword);
-  console.log("Nouveau mot de passe:", newPassword);
-  console.log("Confirmer le mot de passe:", confirmPassword);
-
-  try {
-    const response = await fetch('http://192.168.1.199:8000/api/modifier_mot_de_passe_api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Spécifier le type de contenu
-      },
-      body: JSON.stringify({
-        old_password: oldPassword,  // Ancien mot de passe
-        new_password: newPassword,  // Nouveau mot de passe
-        confirm_password: confirmPassword  // Confirmation du nouveau mot de passe
-      }),
-    });
-    const data = await response.json();  // Attendre la réponse JSON
-
-    if (response.ok) {
-      alert("Mot de passe modifié avec succès!");
-      closePasswordModal(); // Fermer le modal de mot de passe
-    } else {
-      alert(data.error || "Erreur lors de la modification du mot de passe.");
+  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Permission de stockage',
+            message:
+              'Cette application a besoin d\'accéder à vos fichiers pour les pièces jointes.',
+            buttonNeutral: 'Demander plus tard',
+            buttonNegative: 'Annuler',
+            buttonPositive: 'OK',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
     }
-  } catch (error) {
-    console.error('Error changing password:', error);
-    alert("Erreur de connexion au serveur.");
-  }
-};
+    return true;
+  };
 
+  const selectFile = async () => {
+    try {
+      const file = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+      console.log('Fichier sélectionné :', file);
+      setSelectedFile(file);
+    } catch (err) {
+      console.error('Erreur lors de la sélection du fichier :', err);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (message.trim() || selectedFile) {
+      console.log('Envoi du message...');
+      
+      const formData = new FormData();
+      formData.append('contenu', message);
+    
+      if (selectedFile) {
+        const file = selectedFile.assets[0]; // Extraire le fichier du tableau `assets`
+        console.log('Fichier sélectionné :', file);
   
-  // Afficher les options de modification dans le modal
-  const handleOptionSelect = (option) => {
-    if (option === "Modifier Mot de Passe") {
-      setPasswordModalVisible(true);
+        formData.append('fichier_joint', {
+          uri: file.uri,
+          type: file.mimeType || 'application/octet-stream', // Ajouter un type MIME par défaut si non défini
+          name: file.name,
+        });
+        console.log('Fichier dans FormData:', formData);
+      }
+    
+      try {
+        console.log('Tentative d\'envoi du message avec formData:', formData);
+        const response = await axios.post('http://192.168.1.199:8000/api/discussion/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log('Réponse:', response.data);
+        if (response.status === 200) {
+          fetchMessages(); // Rafraîchir les messages
+        } else {
+          console.log('Erreur réponse:', response.data);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi du message :', error);
+      }
+    
+      setMessage('');
+      setSelectedFile(null);
+    } else {
+      console.log('Aucun message ou fichier à envoyer');
     }
-    closeModal();
   };
+  
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   return (
     <View style={styles.container}>
-      {/* Première boîte */}
-      <View style={styles.headerBox}>
-        {/* Photo ou avatar par défaut */}
-        <View style={styles.photoContainer}>
-          {userData.photo ? (
-            <Image
-              source={{ uri: `http://192.168.1.199:8000/media/${userData.photo}` }}
-              style={styles.profilePhoto}
-              resizeMode="contain"
-            />
-          ) : (
-            <Ionicons name="person-circle-outline" size={80} color="#fff" />
+      {loading ? (
+        <Text>Chargement...</Text>
+      ) : (
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => (item.id ? item.id.toString() : String(Math.random()))}
+          renderItem={({ item }) => (
+            <View
+              style={[
+                styles.messageContainer,
+                item.type_message === 'operateur' ? styles.receivedMessage : styles.sentMessage,
+              ]}
+            >
+              <Text style={styles.messageText}>{item.contenu ? item.contenu : 'Message vide'}</Text>
+
+              {item.fichier_joint && (
+                <TouchableOpacity
+                  onPress={() => {
+                    const baseUrl = 'http://192.168.1.199:8000/media/';
+                    const fullUrl = item.fichier_joint.startsWith('/')
+                      ? `${baseUrl}${item.fichier_joint.slice(1)}`
+                      : `${baseUrl}${item.fichier_joint}`;
+
+                    Linking.openURL(fullUrl).catch((err) =>
+                      console.error('Impossible d’ouvrir le fichier joint :', err)
+                    );
+                  }}
+                  style={styles.attachmentIconContainer}
+                >
+                  <Ionicons name="document-attach" size={24} color="#007BFF" />
+                </TouchableOpacity>
+              )}
+
+              <Text style={styles.timestamp}>
+                {item.date_envoi ? new Date(item.date_envoi).toLocaleString() : ''}
+              </Text>
+            </View>
           )}
-        </View>
-        {/* Nom et détails */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.userName}>{userData.name}</Text>
-          <Text style={styles.userDetails}>Contact: {userData.contact}</Text>
-          <Text style={styles.userDetails}>Email: {userData.email}</Text>
-        </View>
-        {/* Menu (pencil) */}
-        <TouchableOpacity 
-          style={styles.menuButton} 
-          onPress={() => setModalVisible(true)}
-          onLayout={handleLayout} // Utiliser onLayout pour obtenir la position du bouton
-        >
-          <Ionicons name="pencil-outline" size={20} color="white" />
+          contentContainerStyle={styles.messagesList}
+        />
+      )}
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Écrivez un message..."
+          value={message}
+          onChangeText={setMessage}
+        />
+        <TouchableOpacity style={styles.attachmentButton} onPress={selectFile}>
+          <Ionicons name="attach" size={24} color={selectedFile ? '#007BFF' : '#888'} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+          <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      {/* Détails */}
-      <View style={styles.detailBox}>
-        <Text style={styles.detailText}>N° CIN: {formatNumberWithSpaces(userData.cin)}</Text>
-        <Text style={styles.detailText}>N° PRENIF: {formatNumberWithSpaces(userData.propr_nif)}</Text>
-      </View>
-
-      {/* Modal pour les options */}
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="fade"
-        onRequestClose={closeModal}
-      >
-        <TouchableWithoutFeedback onPress={closeModal}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={[styles.modalContainer, { top: modalPosition.top, right: modalPosition.right }]} >
-                <TouchableOpacity style={styles.modalItem} onPress={() => handleOptionSelect('Modifier Info')}>
-                  <Ionicons name="information-circle-outline" size={24} color="#f1c038" />
-                  <Text style={styles.modalText}>informations</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.modalItem} onPress={() => handleOptionSelect('Modifier Mot de Passe')}>
-                  <Ionicons name="key-outline" size={24} color="red" />
-                  <Text style={styles.modalText}>mot de passe</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.modalItem} onPress={() => handleOptionSelect('Modifier Photo')}>
-                  <Ionicons name="camera-outline" size={24} color="green" />
-                  <Text style={styles.modalText}>photo de profil</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
-      {/* Modal pour modifier le mot de passe */}
-      <Modal
-        transparent={true}
-        visible={passwordModalVisible}
-        animationType="fade"
-        onRequestClose={closePasswordModal}
-      >
-        <TouchableWithoutFeedback onPress={closePasswordModal}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.passwordModalContainer}>
-                <Text style={styles.modalText}>Modifier Mot de Passe</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Ancien mot de passe"
-                  secureTextEntry
-                  value={oldPassword}
-                  onChangeText={setOldPassword}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Nouveau mot de passe"
-                  secureTextEntry
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Confirmer le mot de passe"
-                  secureTextEntry
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                />
-                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-                <Button title="Valider" onPress={handleChangePassword} />
-                <Button title="Annuler" onPress={closePasswordModal} color="red" />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      {/* Affichage de l'URI du fichier sélectionné */}
+      {selectedFile && (
+        <Text style={styles.fileUriText}>Fichier sélectionné : {selectedFile.uri}</Text>
+      )}
     </View>
   );
 };
@@ -232,115 +180,83 @@ const handleChangePassword = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f5f5f5',
     padding: 10,
   },
-  headerBox: {
-    width: '100%',
-    backgroundColor: '#87CEEB', // Bleu ciel
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    position: 'relative',
-    height: 200,
+  messagesList: {
+    paddingBottom: 20,
   },
-  photoContainer: {
-    marginRight: 15,
-  },
-  profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  infoContainer: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  userDetails: {
-    fontSize: 12,
-    color: '#6d6d6d',
-    marginTop: 1,
-  },
-  menuButton: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-  },
-  detailBox: {
-    backgroundColor: '#fff',
-    marginTop: 20,
-    padding: 15,
+  messageContainer: {
+    marginVertical: 5,
+    maxWidth: '80%',
+    padding: 10,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  detailText: {
-    fontSize: 18,
-    color: 'gray',
-    marginBottom: 10,
+  sentMessage: {
+    backgroundColor: '#c1f2c1', // Vert pastel pour le contribuable
+    alignSelf: 'flex-end',
+    marginRight: 10,
   },
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    width: 200,
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-    position: 'absolute',
-  },
-  passwordModalContainer: {
-    backgroundColor: 'white',
-    width: 300,
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  modalItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  modalText: {
+  receivedMessage: {
+    backgroundColor: '#d3d3d3', // Gris pastel pour l'opérateur
+    alignSelf: 'flex-start',
     marginLeft: 10,
-    fontSize: 18,
-    color: 'black',
   },
-  input: {
-    width: '100%',
+  messageText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#888',
+    textAlign: 'right',
+    marginTop: 5,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 30,
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  textInput: {
+    flex: 1,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 10,
-    borderRadius: 5,
+    borderRadius: 20,
+    paddingLeft: 15,
+    paddingRight: 10,
+    fontSize: 16,
   },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    marginBottom: 10,
+  attachmentButton: {
+    marginLeft: 10,
+  },
+  sendButton: {
+    backgroundColor: '#87CEEB',
+    borderRadius: 20,
+    padding: 10,
+    marginLeft: 10,
+  },
+  attachmentIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  fileUriText: {
+    marginTop: 10,
+    color: '#007BFF',
+    fontSize: 12,
   },
 });
 
-export default ProfileScreen;
+export default ChatScreen;
