@@ -54,7 +54,7 @@ const TransactionList = ({ navigation }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.box}
-            onPress={() => navigation.navigate('TransactionDetail', { n_quit: item.n_quit })} // Passer uniquement n_quit
+            onPress={() => navigation.navigate('TransactionDetail', { n_quit: item.n_quit })} 
           >
             <View>
               <Text style={styles.date}>N° Quit: {item.n_quit}</Text>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   resteContainer: {
-    flexDirection: 'row', // Aligner "Reste à payer" et la valeur côte à côte
+    flexDirection: 'row', 
     alignItems: 'center',
   },
   date: {
@@ -104,24 +104,24 @@ const styles = StyleSheet.create({
   },
   nomImpôt: {
     fontSize: 14,
-    color: '#666', // Gris pour "Reste à payer"
+    color: '#666',
   },
   resteAPayer: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#c61618', // Rouge pour la valeur "Reste à payer"
+    color: '#c61618', 
   },
   totalPayeeContainer: {
-    alignItems: 'flex-end', // Alignement à droite pour le bloc total payé
+    alignItems: 'flex-end',
   },
   montantTitle: {
     fontSize: 14,
-    color: '#666', // Gris pour "Total Payée"
+    color: '#666', 
   },
   totalPayee: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#32970a', // Vert pour la valeur "Total Payée"
+    color: '#32970a', 
   },
 });
 

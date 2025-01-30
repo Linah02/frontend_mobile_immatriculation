@@ -30,7 +30,7 @@ const InscriptionStep1 = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseGenres = await fetch('http://192.168.0.185:8000/api/genres');
+        const responseGenres = await fetch('http://192.168.1.199:8000/api/genres');
         if (!responseGenres.ok) throw new Error(`Erreur HTTP: ${responseGenres.status}`);
         const dataGenres = await responseGenres.json();
         setGenres(dataGenres);
@@ -43,7 +43,7 @@ const InscriptionStep1 = ({ navigation }) => {
 
       try {
         const responseSituations = await fetch(
-          'http://192.168.0.185:8000/api/situations-matrimoniales/'
+          'http://192.168.1.199:8000/api/situations-matrimoniales/'
         );
         if (!responseSituations.ok) throw new Error(`Erreur HTTP: ${responseSituations.status}`);
         const dataSituations = await responseSituations.json();
@@ -82,7 +82,7 @@ const InscriptionStep1 = ({ navigation }) => {
     if (!formData.nom || !formData.genre || !formData.dateNaissance || !formData.lieuNaissance || !formData.situationMatrimoniale) {
       Alert.alert('Champs manquants', 'Tous les champs sauf le prénom sont obligatoires.');
     } else {
-      console.log('Données soumises :', formData); // Pour déboguer et vérifier les données
+      console.log('Données soumises :', formData); 
       navigation.push('InscriptionStep2', { step1Data: formData });
     }
    

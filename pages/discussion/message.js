@@ -74,18 +74,18 @@ const ChatScreen = () => {
         date_envoi: new Date().toISOString(),
       };
   
-      setMessages((prevMessages) => [newMessage, ...prevMessages]); // Ajouter le nouveau message en haut de la liste
+      setMessages((prevMessages) => [newMessage, ...prevMessages]); 
   
       const formData = new FormData();
       formData.append('contenu', message);
     
       if (selectedFile) {
-        const file = selectedFile.assets[0]; // Extraire le fichier du tableau `assets`
+        const file = selectedFile.assets[0]; 
         console.log('Fichier sélectionné :', file);
     
         formData.append('fichier_joint', {
           uri: file.uri,
-          type: file.mimeType || 'application/octet-stream', // Ajouter un type MIME par défaut si non défini
+          type: file.mimeType || 'application/octet-stream', 
           name: file.name,
         });
         console.log('Fichier dans FormData:', formData);
@@ -101,7 +101,6 @@ const ChatScreen = () => {
   
         console.log('Réponse:', response.data);
         if (response.status === 200) {
-          // Le message a été envoyé, rien de plus à faire ici pour la mise à jour
         } else {
           console.log('Erreur réponse:', response.data);
         }
@@ -203,12 +202,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   sentMessage: {
-    backgroundColor: '#c1f2c1', // Vert pastel pour le contribuable
+    backgroundColor: '#c1f2c1', 
     alignSelf: 'flex-end',
     marginRight: 10,
   },
   receivedMessage: {
-    backgroundColor: '#d3d3d3', // Gris pastel pour l'opérateur
+    backgroundColor: '#d3d3d3', 
     alignSelf: 'flex-start',
     marginLeft: 10,
   },

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import debounce from 'lodash.debounce';
 
-const { height: screenHeight } = Dimensions.get('window'); // Récupérer la hauteur de l'écran
+const { height: screenHeight } = Dimensions.get('window');
 
 const InscriptionStep2 = ({ navigation, route }) => {
   const [residenceData, setResidenceData] = useState({
@@ -26,11 +26,11 @@ const InscriptionStep2 = ({ navigation, route }) => {
     fokontany: '',
     id_fokontany: '',
   });
-  const { step1Data } = route.params; // Données de l'étape 1
+  const { step1Data } = route.params;
   const [suggestions, setSuggestions] = useState([]);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
-  const inputRef = useRef(null); // Référence à l'input province pour gérer le focus
+  const inputRef = useRef(null); 
 
   const fetchSuggestions = useCallback(
     debounce(async (query) => {
@@ -88,7 +88,7 @@ const InscriptionStep2 = ({ navigation, route }) => {
   ];
 
   useEffect(() => {
-    console.log('Suggestions:', suggestions);  // Vérification de la liste des suggestions
+    console.log('Suggestions:', suggestions);
   }, [suggestions]);
 
   return (
@@ -109,7 +109,7 @@ const InscriptionStep2 = ({ navigation, route }) => {
               value={item.value}
               onChangeText={(value) => handleInputChange(item.field, value)}
               editable={item.editable !== false}
-              ref={item.field === 'province' ? inputRef : null} // On attache la référence ici
+              ref={item.field === 'province' ? inputRef : null} 
             />
           </View>
         )}
@@ -138,8 +138,8 @@ const InscriptionStep2 = ({ navigation, route }) => {
                 style={styles.button}
                 onPress={() =>
                   navigation.navigate('InscriptionStep3', {
-                    step1Data: step1Data, // Données reçues de l'étape 1
-                    id_fokontany: residenceData.id_fokontany, // Seulement le champ caché fkt_no
+                    step1Data: step1Data, 
+                    id_fokontany: residenceData.id_fokontany, 
                   })
                 }
               >
@@ -156,8 +156,8 @@ const InscriptionStep2 = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16, // Ajoute un padding horizontal global
-    backgroundColor: '#f5f5f5', // Couleur d'arrière-plan pour tester les débordements
+    paddingHorizontal: 16, 
+    backgroundColor: '#f5f5f5',
   },
   subtitle: {
     fontSize: 20,

@@ -16,13 +16,24 @@ import TransactionDetail from './pages/accueil/detailTransaction';
 import { navigationRef } from './NavigationService';
 import ChatScreen from './pages/discussion/message';
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator(); // Créer le TabNavigator pour la barre de navigation en bas
+const logout = async () => {
+  try {
+    // Supprimer les informations d'authentification stockées
+    // await AsyncStorage.removeItem('userToken');  // ou votre clé de session
 
+    // Rediriger vers la page de connexion
+    navigationRef.navigate('Login');
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion", error);
+  }
+};
+// const Tab = createBottomTabNavigator(); // Créer le TabNavigator pour la barre de navigation en bas
 const AppNavigation = ({ toggleMenu, slideAnim }) => {
   return (
     <NavigationContainer ref={navigationRef}>
       <View style={{ flex: 1 }}>
-        <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName={"Login"}>
+        {/* <Stack.Navigator initialRouteName="Login"> */}
           <Stack.Screen name="InscriptionStep1" component={InscriptionStep1} />
           <Stack.Screen name="InscriptionStep2" component={InscriptionStep2} />
           <Stack.Screen name="InscriptionStep3" component={InscriptionStep3} />
@@ -81,7 +92,8 @@ const AppNavigation = ({ toggleMenu, slideAnim }) => {
             <Ionicons name="person-circle" size={25} color="white" />
             <Text style={styles.menuText}>Profil</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem}
+          onPress={logout}>
             <Ionicons name="exit" size={25} color="white" />
             <Text style={styles.menuText}>Déconnexion</Text>
           </TouchableOpacity>

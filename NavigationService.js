@@ -16,3 +16,11 @@ export function goBack() {
     navigationRef.goBack();
   }
 }
+
+// Fonction pour obtenir le nom de la route actuelle
+export function getCurrentRouteName() {
+  if (navigationRef.isReady()) {
+    return navigationRef.getCurrentRoute()?.name || '';
+  }
+  return '';
+}

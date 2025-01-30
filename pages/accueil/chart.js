@@ -20,18 +20,18 @@ const StatistiqueScreen = () => {
         const datasets = result.data.map(item => item.total_mnt_ver);
 
         // Ne pas ajuster les montants, garder les valeurs originales
-        const minValue = 0; // L'échelle commence à 0
+        const minValue = 0; 
         const maxValue = Math.ceil(Math.max(...datasets));
 
         setData({
           labels,
           datasets: [
             {
-              data: datasets, // Utilisez les montants originaux
+              data: datasets, 
             },
           ],
-          minValue, // Échelle commence à 0
-          suggestedMax: maxValue, // Utiliser la valeur maximale calculée
+          minValue, 
+          suggestedMax: maxValue, 
         });
 
         setTableData(result.data);
@@ -77,8 +77,8 @@ const StatistiqueScreen = () => {
               borderRadius: 16,
             },
           }}
-          fromZero={true} // Force le graphique à commencer à 0
-          yAxisSuffix={` AR`} // Affichage des montants en AR
+          fromZero={true} 
+          yAxisSuffix={` AR`}
         />
       )}
 

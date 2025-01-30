@@ -25,7 +25,7 @@ const Login = ({ navigation }) => {
 
       if (response.ok) {
         console.log('Navigating to RecuperationCode');
-        navigation.navigate('RecuperationCode'); // Navigation vers l'écran RecuperationCode
+        navigation.navigate('RecuperationCode'); 
       } else {
         setError(data.error || 'Erreur de connexion');
       }
@@ -57,7 +57,7 @@ const Login = ({ navigation }) => {
       </TouchableOpacity>
       {/* Lien vers l'inscription */}
       <TouchableOpacity style={styles.registerLink}
-        onPress={() => navigation.navigate('InscriptionStep1')} // Navigation vers la page d'inscription
+        onPress={() => navigation.navigate('InscriptionStep1')} 
          >
         <Text style={styles.registerText}>S'inscrire</Text>
       </TouchableOpacity>

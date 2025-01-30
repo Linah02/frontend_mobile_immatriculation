@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert} from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Import correct
+import { Picker } from '@react-native-picker/picker';
 const InscriptionStep3 = ({ navigation, route }) => {
-  // Récupérer les données des étapes 1 et 2
   const { step1Data, id_fokontany } = route.params ? route.params : {};
   if (!step1Data || !id_fokontany) {
     Alert.alert('Erreur', 'Données manquantes dans les étapes précédentes.');
     navigation.goBack();
-    return; // Ne pas continuer l'exécution
+    return; 
   }
 
   const [cinData, setCinData] = useState({
@@ -20,7 +19,7 @@ const InscriptionStep3 = ({ navigation, route }) => {
 
   const handleInputChange = (field, value) => {
     setCinData({ ...cinData, [field]: value });
-    console.log(`Changement dans ${field}:`, value);  // Affiche la donnée chaque fois qu'un champ est modifié
+    // console.log(`Changement dans ${field}:`, value); 
   };
   const regions = [
     'Analamanga',
@@ -51,7 +50,6 @@ const InscriptionStep3 = ({ navigation, route }) => {
     const { cin, dateDelivrance, lieuDelivrance, contact, email } = cinData;
     console.log("Données du formulaire avant soumission:",step1Data,id_fokontany, cinData,);
     
-    // Validation des champs côté client
     if (!cin || !dateDelivrance || !lieuDelivrance || !contact || !email) {
       Alert.alert('Erreur', 'Tous les champs sont obligatoires.');
       return;
@@ -99,12 +97,11 @@ const InscriptionStep3 = ({ navigation, route }) => {
           [
             {
               text: 'Se connecter',
-              onPress: () => navigation.navigate('Login'), // Redirection vers la page de connexion
+              onPress: () => navigation.navigate('Login'), 
             },
           ]
         );
        } else {
-        // Afficher le message d'erreur retourné par le serveur
         Alert.alert('Erreur', result.message || 'Une erreur est survenue.');
       }
     } catch (error) {
@@ -114,8 +111,6 @@ const InscriptionStep3 = ({ navigation, route }) => {
 
 
   };
-  
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Informations CIN et Contact</Text>
@@ -180,13 +175,13 @@ const InscriptionStep3 = ({ navigation, route }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.goBack()} // Revenir à l'étape précédente
+          onPress={() => navigation.goBack()} 
         >
           <Text style={styles.buttonText}>Annuler</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={handleSubmit} // Soumettre les données
+          onPress={handleSubmit} 
         >
           <Text style={styles.buttonText}>Valider</Text>
         </TouchableOpacity>
@@ -235,9 +230,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   successText: {
-    color: 'green', // Couleur du texte en vert
-    fontSize: 18, // Taille de police
-    fontWeight: 'bold', // Texte en gras
+    color: 'green', 
+    fontSize: 18, 
+    fontWeight: 'bold', 
   },
 });
 

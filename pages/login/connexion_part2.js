@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 const RecuperationCode = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
-  const [timer, setTimer] = useState(60);  // Timer de 1 minute
-  const [isCodeValid, setIsCodeValid] = useState(false); // Statut de validation du code
-  const navigation = useNavigation(); // Hook pour gérer la navigation
+  const [timer, setTimer] = useState(60);  
+  const [isCodeValid, setIsCodeValid] = useState(false); 
+  const navigation = useNavigation();
 
   useEffect(() => {
     let interval = null;
@@ -19,10 +19,10 @@ const RecuperationCode = () => {
     } else if (timer === 0) {
       clearInterval(interval);
       setError('Le code a expiré, veuillez en demander un nouveau.');
-      setIsCodeValid(false); // Le code est expiré, il doit être renvoyé
+      setIsCodeValid(false); 
     }
 
-    return () => clearInterval(interval); // Nettoyage de l'intervalle quand le composant est démonté ou que le timer expire
+    return () => clearInterval(interval);
   }, [timer, isCodeValid]);
 
   const handleSendCode = async () => {
@@ -40,8 +40,8 @@ const RecuperationCode = () => {
 
       if (response.ok) {
         setIsCodeValid(true);
-        setTimer(60); // Redémarre le timer
-        setError(''); // Réinitialise l'erreur
+        setTimer(60); 
+        setError(''); 
       } else {
         setError(data.error || 'Erreur lors de l\'envoi du code.');
       }
@@ -68,7 +68,7 @@ const RecuperationCode = () => {
         console.log(data);
 
         if (response.ok) {
-          navigation.navigate('Acceuil');
+          navigation.navigate('ProfileScreen');
         } else {
           setError(data.error || 'Code incorrect');
         }
@@ -106,7 +106,7 @@ const RecuperationCode = () => {
         <TouchableOpacity
           style={[styles.button, styles.redButton]}
           onPress={handleSendCode}
-          disabled={isCodeValid && timer > 0} // Désactive le bouton pendant le compte à rebours
+          disabled={isCodeValid && timer > 0} 
         >
           <Text style={styles.buttonText}>Renvoyer</Text>
         </TouchableOpacity>
@@ -114,7 +114,7 @@ const RecuperationCode = () => {
         <TouchableOpacity
           style={[styles.button, styles.greenButton]}
           onPress={handleValidateCode}
-          disabled={!isCodeValid || timer === 0} // Désactive le bouton si le code est expiré ou invalide
+          disabled={!isCodeValid || timer === 0} 
         >
           <Text style={styles.buttonText}>Valider</Text>
         </TouchableOpacity>

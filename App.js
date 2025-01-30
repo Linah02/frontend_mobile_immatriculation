@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, TouchableWithoutFeedback, Animated, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import AppNavigation from './AppNavigation'; // Importez votre AppNavigation
-import { navigationRef } from './NavigationService'; // Assurez-vous que navigationRef est bien importé
+import AppNavigation from './AppNavigation'; 
+import { navigationRef, getCurrentRouteName } from './NavigationService';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);  // Ajoutez un état pour le nombre de messages non lus
-  const [slideAnim] = useState(new Animated.Value(-250)); // Valeur initiale pour l'animation du menu
+  const [unreadCount, setUnreadCount] = useState(0);  
+  const [slideAnim] = useState(new Animated.Value(-250)); 
+  const [currentRoute, setCurrentRoute] = useState('');
 
   const fetchUnreadMessages = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/unread_count/', { // Mettez ici l'URL correcte
+      const response = await fetch('http://192.168.1.199:8000/api/unread_count/', { 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +22,7 @@ export default function App() {
       const data = await response.json();
       
       if (data.unread_count !== undefined) {
-        console.log("Messages non lus :", data.unread_count); // Afficher dans la console du navigateur
+        console.log("Messages non lus :", data.unread_count);
         setUnreadCount(data.unread_count); // Mettre à jour l'état avec le nombre de messages non lus
       } else {
         console.error('Erreur lors de la récupération des messages non lus:', data.error);
@@ -33,7 +34,7 @@ export default function App() {
 
   const markMessagesAsRead = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/mark_messages_as_read/', { // Mettez ici l'URL correcte
+      const response = await fetch('http://192.168.1.199:8000/api/mark_messages_as_read/', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ export default function App() {
   
       if (data.success) {
         console.log("Messages marqués comme lus");
-        setUnreadCount(0); // Mettre à jour l'état pour supprimer l'indicateur
+        setUnreadCount(0);
       } else {
         console.error('Erreur lors de la mise à jour des messages:', data.error);
       }
@@ -52,14 +53,22 @@ export default function App() {
       console.error('Erreur de connexion:', error);
     }
   };
-  
-  // Appeler la fonction au démarrage
+  const isLoginScreen = ['Login', 'RecuperationCode'].includes(currentRoute);
+ 
+
   useEffect(() => {
-    fetchUnreadMessages(); // Récupérer les messages non lus au chargement
+    const interval = setInterval(() => {
+      setCurrentRoute(getCurrentRouteName());
+    }, 500); 
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    fetchUnreadMessages(); 
   }, []);
 
   const toggleMenu = () => {
-    const toValue = isMenuOpen ? -200 : 0; // Valeur du menu (fermé ou ouvert)
+    const toValue = isMenuOpen ? -200 : 0; 
     setIsMenuOpen(!isMenuOpen);
     Animated.spring(slideAnim, {
       toValue,
@@ -68,7 +77,7 @@ export default function App() {
   };
 
   const navigateToProfile = () => {
-    navigationRef.current?.navigate('ProfileScreen'); // Utilisation de navigationRef pour la navigation
+    navigationRef.current?.navigate('ProfileScreen'); 
   };
 
   const navigateToChat = () => {
@@ -85,31 +94,25 @@ export default function App() {
         </TouchableWithoutFeedback>
       )}
       <View style={styles.container}>
-        <AppNavigation toggleMenu={toggleMenu} slideAnim={slideAnim} />
+        <AppNavigation  ref={navigationRef} toggleMenu={toggleMenu} slideAnim={slideAnim} />
       </View>
 
       {/* Barre de navigation en bas */}
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navButton} onPress={toggleMenu}>
-          <Ionicons name="menu" size={30} color="#a9d8de" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={navigateToProfile} // Naviguer vers ProfileScreen
-        >
-          <Ionicons name="person" size={30} color="#a9d8de" />
-        </TouchableOpacity>
-        <TouchableOpacity 
-        style={styles.navButton}
-        onPress={navigateToChat}>
-        <Ionicons name="chatbubbles" size={30} color="#a9d8de" />
-        {/* Affichage du point rouge si unreadCount est supérieur à 0 */}
-        {unreadCount > 0 && (
-          <View style={styles.unreadIndicator} />
-        )}
-      </TouchableOpacity>
-
-      </View>
+      {!isLoginScreen && (
+        <View style={styles.navBar}>
+          <TouchableOpacity style={styles.navButton} onPress={toggleMenu}>
+            <Ionicons name="menu" size={30} color="#a9d8de" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}
+          onPress={() => navigationRef.current?.navigate('ProfileScreen')}>
+            <Ionicons name="person" size={30} color="#a9d8de" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}
+          onPress={() => navigationRef.current?.navigate('ChatScreen')}>
+            <Ionicons name="chatbubbles" size={30} color="#a9d8de" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -120,10 +123,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingBottom: 70, // Donne de l'espace pour la barre de navigation
+    paddingBottom: 70, 
   },
   navBar: {
-    position: 'fixed',  // Change de 'absolute' à 'fixed'
+    position: 'fixed', 
     bottom: 0,
     left: 0,
     right: 0,
@@ -147,7 +150,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  // Style pour le point rouge
   unreadIndicator: {
     position: 'absolute',
     top: -2,
