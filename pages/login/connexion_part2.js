@@ -28,7 +28,7 @@ const RecuperationCode = () => {
   const handleSendCode = async () => {
     try {
       // Appeler l'API pour envoyer le code
-      const response = await fetch('http://192.168.1.199:8000/api/send_code/', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/send_code/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const RecuperationCode = () => {
   const handleValidateCode = async () => {
     if (code.length === 6 && !isNaN(code)) {
       try {
-        const response = await fetch('http://192.168.1.199:8000/api/validate_code/', {
+        const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/validate_code/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

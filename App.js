@@ -12,7 +12,7 @@ export default function App() {
 
   const fetchUnreadMessages = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/unread_count/', { 
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/unread_count/', { 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export default function App() {
 
   const markMessagesAsRead = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/mark_messages_as_read/', { 
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/mark_messages_as_read/', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function App() {
       console.error('Erreur de connexion:', error);
     }
   };
-  const isLoginScreen = ['Login', 'RecuperationCode'].includes(currentRoute);
+  const isLoginScreen = ['Login', 'RecuperationCode','InscriptionStep1','InscriptionStep2','InscriptionStep3'].includes(currentRoute);
  
 
   useEffect(() => {

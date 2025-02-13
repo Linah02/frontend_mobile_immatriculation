@@ -40,7 +40,7 @@ const ProfileScreen = () => {
   // Fonction pour récupérer les données de l'API
   const fetchUserData = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/api_profil', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/api_profil', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

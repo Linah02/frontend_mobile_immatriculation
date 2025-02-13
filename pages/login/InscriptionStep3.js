@@ -76,7 +76,7 @@ const InscriptionStep3 = ({ navigation, route }) => {
     }
   
     try {
-      const response = await fetch('http://192.168.0.185:8000/api/inscription/', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/inscription/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

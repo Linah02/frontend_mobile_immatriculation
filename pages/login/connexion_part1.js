@@ -9,7 +9,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/login/', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

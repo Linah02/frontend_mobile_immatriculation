@@ -30,7 +30,7 @@ const InscriptionStep1 = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseGenres = await fetch('http://192.168.1.199:8000/api/genres');
+        const responseGenres = await fetch('https://api-mobile-immatriculation.onrender.com/api/genres');
         if (!responseGenres.ok) throw new Error(`Erreur HTTP: ${responseGenres.status}`);
         const dataGenres = await responseGenres.json();
         setGenres(dataGenres);
@@ -43,7 +43,7 @@ const InscriptionStep1 = ({ navigation }) => {
 
       try {
         const responseSituations = await fetch(
-          'http://192.168.1.199:8000/api/situations-matrimoniales/'
+          'https://api-mobile-immatriculation.onrender.com/api/situations-matrimoniales/'
         );
         if (!responseSituations.ok) throw new Error(`Erreur HTTP: ${responseSituations.status}`);
         const dataSituations = await responseSituations.json();

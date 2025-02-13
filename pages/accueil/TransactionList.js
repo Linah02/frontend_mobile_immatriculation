@@ -8,7 +8,7 @@ const TransactionList = ({ navigation }) => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/transactions/?page=1');
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/transactions/?page=1');
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération des transactions');
       }

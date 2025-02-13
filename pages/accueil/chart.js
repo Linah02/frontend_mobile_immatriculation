@@ -13,7 +13,7 @@ const StatistiqueScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.1.199:8000/api/chart/');
+        const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/chart/');
         const result = await response.json();
 
         const labels = result.data.map(item => item.annee.toString());

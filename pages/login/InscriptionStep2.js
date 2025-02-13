@@ -41,7 +41,7 @@ const InscriptionStep2 = ({ navigation, route }) => {
       }
 
       try {
-        const response = await fetch(`http://192.168.0.185:8000/api/list_fokontany/?search=${query}`);
+        const response = await fetch(`https://api-mobile-immatriculation.onrender.com/api/list_fokontany/?search=${query}`);
         if (!response.ok) throw new Error('Échec de la requête');
 
         const data = await response.json();

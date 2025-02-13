@@ -14,7 +14,7 @@ const ChatScreen = () => {
   // Fonction pour récupérer les messages depuis l'API
   const fetchMessages = async () => {
     try {
-      const response = await fetch('http://192.168.1.199:8000/api/discussion/', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/discussion/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const ChatScreen = () => {
     
       try {
         console.log('Tentative d\'envoi du message avec formData:', formData);
-        const response = await axios.post('http://192.168.1.199:8000/api/discussion/', formData, {
+        const response = await axios.post('https://api-mobile-immatriculation.onrender.com/api/discussion/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -139,7 +139,7 @@ const ChatScreen = () => {
               {item.fichier_joint && (
                 <TouchableOpacity
                   onPress={() => {
-                    const baseUrl = 'http://192.168.1.199:8000/media/';
+                    const baseUrl = 'https://api-mobile-immatriculation.onrender.com/media/';
                     const fullUrl = item.fichier_joint.startsWith('/')
                       ? `${baseUrl}${item.fichier_joint.slice(1)}`
                       : `${baseUrl}${item.fichier_joint}`;
