@@ -92,7 +92,7 @@ const ProfileScreen = () => {
         email: editedData.email,
       };
   
-      const response = await fetch('http://192.168.1.199:8000/api/modifier_infos_personnelles/', {
+      const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/modifier_infos_personnelles/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ const handleChangePassword = async () => {
   console.log("Confirmer le mot de passe:", confirmPassword);
 
   try {
-    const response = await fetch('http://192.168.1.199:8000/api/modifier_mot_de_passe_api', {
+    const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/modifier_mot_de_passe_api', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Spécifier le type de contenu
@@ -225,7 +225,7 @@ const handleUploadPhoto = async () => {
   });
 
   try {
-    const response = await fetch('http://192.168.1.199:8000/api/modifier_photo_profil/', {
+    const response = await fetch('https://api-mobile-immatriculation.onrender.com/api/modifier_photo_profil/', {
       method: 'POST',
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -253,7 +253,7 @@ const handleUploadPhoto = async () => {
         <View style={styles.photoContainer}>
           {userData.photo ? (
             <Image
-              source={{ uri: `http://192.168.1.199:8000/media/${userData.photo}` }}
+              source={{ uri: `https://api-mobile-immatriculation.onrender.com/media/${userData.photo}` }}
               style={styles.profilePhoto}
               resizeMode="contain"
             />
