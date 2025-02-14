@@ -7,6 +7,7 @@ const StatistiqueScreen = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState([]);
+  const [scaleFactor, setScaleFactor] = useState(1); // Facteur d'échelle
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -19,19 +20,30 @@ const StatistiqueScreen = () => {
         const labels = result.data.map(item => item.annee.toString());
         const datasets = result.data.map(item => item.total_mnt_ver);
 
-        // Ne pas ajuster les montants, garder les valeurs originales
-        const minValue = 0; 
-        const maxValue = Math.ceil(Math.max(...datasets));
+        // Trouver la plus grande valeur pour ajuster l'échelle
+        const maxValue = Math.max(...datasets);
+        let scale = 1;
+
+        if (maxValue > 1_000_000_000) {
+          scale = 1_000_000_000; // Milliards
+        } else if (maxValue > 1_000_000) {
+          scale = 1_000_000; // Millions
+        } else if (maxValue > 1_000) {
+          scale = 1_000; // Milliers
+        }
+
+        setScaleFactor(scale);
+
+        // Transformer les valeurs pour correspondre à l'échelle
+        const scaledData = datasets.map(value => value / scale);
 
         setData({
           labels,
           datasets: [
             {
-              data: datasets, 
+              data: scaledData,
             },
           ],
-          minValue, 
-          suggestedMax: maxValue, 
         });
 
         setTableData(result.data);
@@ -56,7 +68,7 @@ const StatistiqueScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Somme payée par année</Text>
+      <Text style={styles.title}>Somme payée par année ({scaleFactor === 1_000_000_000 ? 'Milliards' : scaleFactor === 1_000_000 ? 'Millions' : scaleFactor === 1_000 ? 'Milliers' : 'Ar'})</Text>
 
       {data && (
         <BarChart
@@ -65,20 +77,22 @@ const StatistiqueScreen = () => {
             datasets: data.datasets,
           }}
           width={screenWidth - 40}
-          height={220}
+          height={300}
+          yAxisLabel=""
+          yAxisSuffix={` ${scaleFactor === 1_000_000_000 ? 'Md' : scaleFactor === 1_000_000 ? 'M' : scaleFactor === 1_000 ? 'K' : ''}`}
+          yAxisInterval={1} // Ajuste la densité des valeurs affichées
           chartConfig={{
             backgroundColor: '#1CC919',
             backgroundGradientFrom: '#8fc3c6',
             backgroundGradientTo: '#ffffff',
-            decimalPlaces: 0,
+            decimalPlaces: 1, // Un chiffre après la virgule pour plus de précision
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: {
               borderRadius: 16,
             },
           }}
-          fromZero={true} 
-          yAxisSuffix={` AR`}
+          fromZero={true}
         />
       )}
 
@@ -91,7 +105,7 @@ const StatistiqueScreen = () => {
         {tableData.map((item, index) => (
           <View style={styles.tableRow} key={index}>
             <Text style={styles.tableCell}>{item.annee}</Text>
-            <Text style={styles.tableCell}>{item.total_mnt_ver.toLocaleString() } .Ar</Text>
+            <Text style={styles.tableCell}>{item.total_mnt_ver.toLocaleString()} AR</Text>
           </View>
         ))}
       </View>

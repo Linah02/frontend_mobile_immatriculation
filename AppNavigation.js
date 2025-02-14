@@ -34,9 +34,9 @@ const AppNavigation = ({ toggleMenu, slideAnim }) => {
       <View style={{ flex: 1 }}>
       <Stack.Navigator initialRouteName={"Login"}>
         {/* <Stack.Navigator initialRouteName="Login"> */}
-          <Stack.Screen name="InscriptionStep1" component={InscriptionStep1} />
-          <Stack.Screen name="InscriptionStep2" component={InscriptionStep2} />
-          <Stack.Screen name="InscriptionStep3" component={InscriptionStep3} />
+          <Stack.Screen name="InscriptionStep1" component={InscriptionStep1} options={{ title: 'Inscription Step 1' }} />
+          <Stack.Screen name="InscriptionStep2" component={InscriptionStep2} options={{ title: 'Inscription Step 2' }} />
+          <Stack.Screen name="InscriptionStep3" component={InscriptionStep3} options={{ title: 'Inscription Step 3' }}/>
           <Stack.Screen
   name="Login"
   component={Connexion_part1}
@@ -45,8 +45,8 @@ const AppNavigation = ({ toggleMenu, slideAnim }) => {
 
           <Stack.Screen name="Acceuil" component={Acceuil} />
           <Stack.Screen name="RecuperationCode" component={RecuperationCode}  options={{ headerShown: false, tabBarVisible: false }}/>
-          <Stack.Screen name="TransactionList" component={TransactionList} options={{ title: 'Détail paiement' }} />
-          <Stack.Screen name="TransactionDetail" component={TransactionDetail} options={{ title: 'liste transaction' }} />
+          <Stack.Screen name="TransactionList" component={TransactionList} options={{ title: 'Historique des paiements' }} />
+          <Stack.Screen name="TransactionDetail" component={TransactionDetail} options={{ title: 'transaction' }} />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: 'Mon Profil' }} />
           <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ title: 'Discussion' }} />
           <Stack.Screen name="StatistiqueScreen" component={StatistiqueScreen} options={{ title: 'Charts' }} />

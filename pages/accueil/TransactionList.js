@@ -60,7 +60,7 @@ const TransactionList = ({ navigation }) => {
               <Text style={styles.date}>N° Quit: {item.n_quit}</Text>
               <View style={styles.resteContainer}>
                 <Text style={styles.nomImpôt}>Reste à payer: </Text>
-                <Text style={styles.resteAPayer}>{`${(item.reste_ap|| 0).toLocaleString('fr-FR')} Ar`}</Text>
+                <Text style={styles.resteAPayer}>{`${(item.rest_ap|| 0).toLocaleString('fr-FR')} Ar`}</Text>
               </View>
             </View>
             <View style={styles.totalPayeeContainer}>
