@@ -12,6 +12,8 @@ import RecuperationCode from './pages/login/connexion_part2';
 import Acceuil from './pages/accueil/index';
 import StatistiqueScreen from './pages/accueil/chart';
 import TransactionList from './pages/accueil/TransactionList';
+import Declaration from './pages/accueil/declaration';
+import ListeDeclaration from './pages/accueil/listDeclaration';
 import TransactionDetail from './pages/accueil/detailTransaction';
 import { navigationRef } from './NavigationService';
 import ChatScreen from './pages/discussion/message';
@@ -44,6 +46,8 @@ const AppNavigation = ({ toggleMenu, slideAnim }) => {
 />
 
           <Stack.Screen name="Acceuil" component={Acceuil} />
+          <Stack.Screen name="Declaration" component={Declaration} />
+          <Stack.Screen name="ListeDeclaration" component={ListeDeclaration} />
           <Stack.Screen name="RecuperationCode" component={RecuperationCode}  options={{ headerShown: false, tabBarVisible: false }}/>
           <Stack.Screen name="TransactionList" component={TransactionList} options={{ title: 'Historique des paiements' }} />
           <Stack.Screen name="TransactionDetail" component={TransactionDetail} options={{ title: 'transaction' }} />
@@ -62,6 +66,26 @@ const AppNavigation = ({ toggleMenu, slideAnim }) => {
             },
           ]}
         >
+        <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              toggleMenu();
+              navigationRef.navigate('Declaration');
+            }}
+          >
+            <Ionicons name="pencil" size={25} color="white" />
+            <Text style={styles.menuText}>Déclaration</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              toggleMenu();
+              navigationRef.navigate('ListeDeclaration');
+            }}
+          >
+            <Ionicons name="document-text-outline" size={25} color="white" />
+            <Text style={styles.menuText}>Mes déclarations</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.menuItem}
             onPress={() => {

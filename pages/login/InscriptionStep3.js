@@ -108,8 +108,6 @@ const InscriptionStep3 = ({ navigation, route }) => {
       console.error(error);
       Alert.alert('Erreur', 'Impossible de se connecter au serveur. Veuillez réessayer.');
     }
-
-
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -219,7 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#a9d8de',
     padding: 10,
     borderRadius: 5,
     width: '48%',
